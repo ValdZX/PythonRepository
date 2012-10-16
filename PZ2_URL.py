@@ -5,7 +5,7 @@ def URL_to_dict(strURL):
     dict_result = {}
     index = strURL.find("://")
     if index < 1:
-        return None    
+        return None
     strURL_tmp = strURL[index + 3:]
     dict_result["scheme"] = strURL[:index]
     index = strURL_tmp.find("@")
@@ -18,17 +18,16 @@ def URL_to_dict(strURL):
             dict_result["pass"] = strURL_uspass[index + 1:]
             if len(dict_result["pass"]) <= 0:
                 return None
-        elif index < 0: 
+        elif index < 0:
             dict_result["username"] = strURL_uspass
             dict_result["pass"] = ""
         else:
-            return None    
+            return None
     elif index < 0:
         dict_result["username"] = ""
         dict_result["pass"] = ""
-    else: 
-        return None	
-		
+    else:
+        return None
     index = strURL_tmp.find("/")
     if index > 0:
         dict_result["path"] = strURL_tmp[index:]
@@ -36,7 +35,7 @@ def URL_to_dict(strURL):
     elif index < 0:
         dict_result["path"] = ""
     else:
-        return None    
+        return None
 
     index = strURL_tmp.find(":")
     if index > 0:
@@ -46,7 +45,7 @@ def URL_to_dict(strURL):
         dict_result["port"] = ""
         dict_result["domain"] = strURL_tmp
     else:
-        return None    
+        return None
     return dict_result
 
 def joinURL(strURL1, strURL2):
@@ -76,11 +75,11 @@ def joinURL(strURL1, strURL2):
     if strPath2[0] == "/":
         strURL = strURL + strPath2
     else:
-        strURL = strURL + strPath1 + "/" + strPath2    
+        strURL = strURL + strPath1 + "/" + strPath2
 
     return strURL
 
-def urlLinks(url,level):
+def urlLinks(url, level):
     strPage = urllib2.urlopen(url).read()
     index = 0
     strLink = ""
@@ -89,10 +88,10 @@ def urlLinks(url,level):
         index = strPage.find("\"")
         if index < 0:
             break
-        strPage = strPage [index + 1:]
+        strPage = strPage[index + 1:]
         index = strPage.find("\"")
         strLink = strPage[:index]
-        strPage = strPage [index + 1:]
+        strPage = strPage[index + 1:]
         dictLink = URL_to_dict(strLink)
         if dictLink != None:
             strPath = dictLink['path']
@@ -103,18 +102,23 @@ def urlLinks(url,level):
     return arrLinks
 
 def testURL():
-    assert URL_to_dict("http://google.com/a/b") == { 'username':'', 'domain':'google.com', 'scheme':'http', 'pass':'', 'path':'/a/b', 'port':''}
-    assert URL_to_dict("http://yser:pass@google.com:80/a/b") == { 'username':'yser', 'domain':'google.com', 'pass':'pass', 'path':'/a/b', 'port':'80', 'scheme':'http'}
-    assert URL_to_dict("http://yser:pass@google.com:80") == { 'username':'yser', 'domain':'google.com', 'pass':'pass', 'path':'', 'port':'80', 'scheme':'http'}
-    assert URL_to_dict("http://yser:pass@google.com:/a/b") == { 'username':'yser', 'domain':'google.com', 'pass':'pass', 'path':'/a/b', 'port':'', 'scheme':'http'}
-    assert URL_to_dict("http://yser@google.com:80/a/b") == { 'username':'yser', 'domain':'google.com', 'pass':'', 'path':'/a/b', 'port':'80', 'scheme':'http'}
+    assert URL_to_dict("http://google.com/a/b") == { 'username':'', 'domain':'google.com',\
+    'scheme':'http', 'pass':'', 'path':'/a/b', 'port':''}
+    assert URL_to_dict("http://yser:pass@google.com:80/a/b") == { 'username':'yser',\
+    'domain':'google.com', 'pass':'pass', 'path':'/a/b', 'port':'80', 'scheme':'http'}
+    assert URL_to_dict("http://yser:pass@google.com:80") == { 'username':'yser',\
+    'domain':'google.com', 'pass':'pass', 'path':'', 'port':'80', 'scheme':'http'}
+    assert URL_to_dict("http://yser:pass@google.com:/a/b") == { 'username':'yser',\
+    'domain':'google.com', 'pass':'pass', 'path':'/a/b', 'port':'', 'scheme':'http'}
+    assert URL_to_dict("http://yser@google.com:80/a/b") == { 'username':'yser',\
+    'domain':'google.com', 'pass':'', 'path':'/a/b', 'port':'80', 'scheme':'http'}
     assert URL_to_dict("http://:pass@google.com:80/a/b") == None
     assert URL_to_dict("http://yser:@google.com:80/a/b") == None
     assert URL_to_dict("http://@google.com:80/a/b") == None
     assert URL_to_dict("://yser:pass@google.com:80/a/b") == None
     assert URL_to_dict("http:yser:pass@google.com:80/a/b") == None
     assert URL_to_dict("http://yser:pass@:80/a/b") == None
-    
+
     print "Test URL passed ok!"
 
 def testJoinURL():
@@ -147,4 +151,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-    
