@@ -1,6 +1,7 @@
 #import urlparse
 import urllib2
 
+
 def URL_to_dict(strURL):
     dict_result = {}
     index = strURL.find("://")
@@ -48,6 +49,7 @@ def URL_to_dict(strURL):
         return None
     return dict_result
 
+
 def joinURL(strURL1, strURL2):
     strURL = ""
     strPath1 = ""
@@ -79,6 +81,7 @@ def joinURL(strURL1, strURL2):
 
     return strURL
 
+
 def urlLinks(url, level):
     strPage = urllib2.urlopen(url).read()
     index = 0
@@ -101,17 +104,18 @@ def urlLinks(url, level):
                 arrLinks.append(strLink)
     return arrLinks
 
+
 def testURL():
-    assert URL_to_dict("http://google.com/a/b") == { 'username':'', 'domain':'google.com',\
-    'scheme':'http', 'pass':'', 'path':'/a/b', 'port':''}
-    assert URL_to_dict("http://yser:pass@google.com:80/a/b") == { 'username':'yser',\
-    'domain':'google.com', 'pass':'pass', 'path':'/a/b', 'port':'80', 'scheme':'http'}
-    assert URL_to_dict("http://yser:pass@google.com:80") == { 'username':'yser',\
-    'domain':'google.com', 'pass':'pass', 'path':'', 'port':'80', 'scheme':'http'}
-    assert URL_to_dict("http://yser:pass@google.com:/a/b") == { 'username':'yser',\
-    'domain':'google.com', 'pass':'pass', 'path':'/a/b', 'port':'', 'scheme':'http'}
-    assert URL_to_dict("http://yser@google.com:80/a/b") == { 'username':'yser',\
-    'domain':'google.com', 'pass':'', 'path':'/a/b', 'port':'80', 'scheme':'http'}
+    assert URL_to_dict("http://google.com/a/b") == {'username': '', 'domain': 'google.com',\
+    'scheme': 'http', 'pass': '', 'path': '/a/b', 'port': ''}
+    assert URL_to_dict("http://yser:pass@google.com:80/a/b") == {'username': 'yser',\
+    'domain': 'google.com', 'pass': 'pass', 'path': '/a/b', 'port': '80', 'scheme': 'http'}
+    assert URL_to_dict("http://yser:pass@google.com:80") == {'username': 'yser',\
+    'domain': 'google.com', 'pass': 'pass', 'path': '', 'port': '80', 'scheme': 'http'}
+    assert URL_to_dict("http://yser:pass@google.com:/a/b") == {'username': 'yser',\
+    'domain': 'google.com', 'pass': 'pass', 'path': '/a/b', 'port': '', 'scheme': 'http'}
+    assert URL_to_dict("http://yser@google.com:80/a/b") == {'username': 'yser',\
+    'domain': 'google.com', 'pass': '', 'path': '/a/b', 'port': '80', 'scheme': 'http'}
     assert URL_to_dict("http://:pass@google.com:80/a/b") == None
     assert URL_to_dict("http://yser:@google.com:80/a/b") == None
     assert URL_to_dict("http://@google.com:80/a/b") == None
@@ -120,6 +124,7 @@ def testURL():
     assert URL_to_dict("http://yser:pass@:80/a/b") == None
 
     print "Test URL passed ok!"
+
 
 def testJoinURL():
     assert joinURL("http://a.com/x", "http://b.com") == "http://b.com/x"
@@ -140,14 +145,17 @@ def testJoinURL():
 
     print "Test joinURL passed ok!"
 
+
 def testUrlLinks():
     for i in urlLinks("http://google.com", 2):
         print i
+
 
 def main():
     testURL()
     testJoinURL()
     testUrlLinks()
+
 
 if __name__ == "__main__":
     exit(main())
