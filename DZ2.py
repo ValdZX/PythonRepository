@@ -61,9 +61,7 @@ def bind(func, *param1):
 
 def bind2(func, *param1, **name_param1):
     def f1(*param2, **name_param2):
-        for i, tag in enumerate(name_param2):
-            name_param1[tag] = name_param2[tag]
-        #return func(*(param1 + param2), **name_param1.update(name_param2)) #unknown error :( "update don't work"
+        name_param1.update(name_param2)
         return func(*(param1 + param2), **name_param1)
     return f1
 
