@@ -37,6 +37,42 @@ def test_exrp_calc():
     print exrp_calc(('+', ('+', 1, 2), ('*', 3, 4)), func_dict)
 
 
+class Sum2CL(object):
+    def evaluate(self, a, b):
+        return a + b
+
+
+class Sub2CL(object):
+    def evaluate(self, a, b):
+        return a - b
+
+
+class Mul2CL(object):
+    def evaluate(self, a, b):
+        return a * b
+
+
+class Div2CL(object):
+    def evaluate(self, a, b):
+        return a / b
+
+
+def exrp_calc_oop(arr):
+    if isinstance(arr[1], tuple):
+        a = exrp_calc_oop(arr[1])
+    else:
+        a = arr[1]
+    if isinstance(arr[2], tuple):
+        b = exrp_calc_oop(arr[2])
+    else:
+        b = arr[2]
+    return arr[0].evaluate(a, b)
+
+
+def test_exrp_calc_oop():
+    print exrp_calc_oop((Sum2CL(), (Sum2CL(), 1, 2), (Mul2CL(), 3, 4)))
+
+
 def compare(filestr1, filestr2):
     result = []
     with open(filestr1, 'rb') as file1:
@@ -79,6 +115,8 @@ def test_compare():
     print compare("file1.txt", "file2.txt")
     print compare2("file1.txt", "file2.txt")
 
-test_compare()
+#test_compare()
 
 test_exrp_calc()
+
+test_exrp_calc_oop()

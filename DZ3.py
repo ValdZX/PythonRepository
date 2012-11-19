@@ -1,75 +1,67 @@
+def set_len(open_sym, end_str):
+    lenX = len(end_str)
+    return open_sym + str(lenX) + "$" + end_str
+
+
 def serialize(obj):
     str_rezult = ""
     if isinstance(obj, int):
-        str_rezult = "(int," + str(obj) + ")"
+        str_rezult = "int," + str(obj) + ")"
+        str_rezult = set_len("(", str_rezult)
     elif isinstance(obj, str):
-        str_rezult = "(str," + obj + ")"
+        str_rezult = "str," + obj + ")"
+        str_rezult = set_len("(", str_rezult)
     elif isinstance(obj, list):
         str1 = ""
-        i = 0
-        while i < len(obj) - 1:
-            str1 += serialize(obj[i])
-            str1 += " "
-            i += 1
-        str1 += serialize(obj[len(obj) - 1])
-        str1 += "]"
-
-        lenX = len(str1)
-        str_rezult = "[" + str(lenX) + "$" + str1
+        if(len(obj) > 0):
+            for item in obj:
+                str1 += serialize(item)
+                str1 += " "
+            str1 = str1[:-1] + "]"
+        else:
+            str1 = "]"
+        str_rezult = set_len("[", str1)
 
     elif isinstance(obj, dict):
         str1 = ""
-        ij = 0
         iter_dict = obj.iteritems()
-        while ij < (len(obj) - 1):
-            item = iter_dict.next()
+        for item in iter_dict:
             str1 += serialize(item[0])
-            #str1 += ":"
             str1 += serialize(item[1])
             str1 += " "
-            ij += 1
-        last_item = iter_dict.next()
-        str1 += serialize(last_item[0])
-        #str1 += ":"
-        str1 += serialize(last_item[1])
-        str1 += "}"
-
-        lenX = len(str1)
-        str_rezult = "{" + str(lenX) + "$" + str1
+        str1 = str1[:-1] + "}"
+        str_rezult = set_len("{", str1)
 
     return str_rezult
 
 
 def deserialize(in_str):
-    #if isinstance(in_str, str):
+    assert len(in_str) > 0
+    assert in_str[0] == "(" or in_str[0] == "[" or in_str[0] == "{"
     if in_str[0] == "(":
-        tokens = in_str[1:-1].split(",")
-        if tokens[0] == "int":
-            return int(tokens[1])
-        elif tokens[0] == "str":
-            return tokens[1]
+        idx_dol = in_str.find("$")
+        assert idx_dol >= 0
+        in_str = in_str[idx_dol + 1: -1]
+        ind_coma = in_str.find(",")
+        type_data = in_str[:ind_coma]
+        data = in_str[ind_coma + 1:]
+        if type_data == "int":
+            return int(data)
+        elif type_data == "str":
+            return data
     elif in_str[0] == "[":
         result = []
         ########################
-        idx_tmp = in_str.find("$")
-        in_str = in_str[idx_tmp + 1:]
+        idx_dol = in_str.find("$")
+        in_str = in_str[idx_dol + 1:]
 
         idx_pr = 0
         while idx_pr == 0:
-            if in_str[0] == "[":
-                idx_tmp = in_str.find("$")
-                len_var = int(in_str[1: idx_tmp])
-                result.append(deserialize(in_str[0: idx_tmp + len_var + 1]))
-                in_str = in_str[idx_tmp + len_var + 1:]
-            elif in_str[0] == "{":
-                idx_tmp = in_str.find("$")
-                len_var = int(in_str[1: idx_tmp])
-                result.append(deserialize(in_str[0: idx_tmp + len_var + 1]))
-                in_str = in_str[idx_tmp + len_var + 1:]
-            elif in_str[0] == "(":
-                idx_end = in_str.find(")")
-                result.append(deserialize(in_str[0: idx_end + 1]))
-                in_str = in_str[idx_end + 1:]
+            idx_dol = in_str.find("$")
+            assert idx_dol >= 0
+            len_var = int(in_str[1: idx_dol])
+            result.append(deserialize(in_str[0: idx_dol + len_var + 1]))
+            in_str = in_str[idx_dol + len_var + 1:]
 
             idx_pr = in_str.find(" ")
             if idx_pr == 0:
@@ -79,29 +71,24 @@ def deserialize(in_str):
     elif in_str[0] == "{":
         result = {}
         ########################
-        idx_tmp = in_str.find("$")
-        in_str = in_str[idx_tmp + 1:]
+        idx_dol = in_str.find("$")
+        assert idx_dol >= 0
+        in_str = in_str[idx_dol + 1:]
 
         idx_pr = 0
         while idx_pr == 0:
-            ind_scob = in_str.find(")")
-            key = deserialize(in_str[:ind_scob + 1])
-            in_str = in_str[ind_scob + 1:]
 
-            if in_str[0] == "[":
-                idx_tmp = in_str.find("$")
-                len_var = int(in_str[1: idx_tmp])
-                value = deserialize(in_str[0: idx_tmp + len_var + 1])
-                in_str = in_str[idx_tmp + len_var + 1:]
-            elif in_str[0] == "{":
-                idx_tmp = in_str.find("$")
-                len_var = int(in_str[1: idx_tmp])
-                value = deserialize(in_str[0: idx_tmp + len_var + 1])
-                in_str = in_str[idx_tmp + len_var + 1:]
-            elif in_str[0] == "(":
-                idx_end = in_str.find(")")
-                value = deserialize(in_str[0: idx_end + 1])
-                in_str = in_str[idx_end + 1:]
+            idx_dol = in_str.find("$")
+            assert idx_dol >= 0
+            len_var = int(in_str[1: idx_dol])
+            key = deserialize(in_str[0: idx_dol + len_var + 1])
+            in_str = in_str[idx_dol + len_var + 1:]
+
+            idx_dol = in_str.find("$")
+            assert idx_dol >= 0
+            len_var = int(in_str[1: idx_dol])
+            value = deserialize(in_str[0: idx_dol + len_var + 1])
+            in_str = in_str[idx_dol + len_var + 1:]
 
             idx_pr = in_str.find(" ")
             if idx_pr == 0:
@@ -150,6 +137,18 @@ def test():
     assert deserialize(strtest) == obj
 
     obj = {'a': 1, 'b': [1, 2, 3, ['3']], 4: 7}
+    strtest = serialize(obj)
+    assert deserialize(strtest) == obj
+
+    obj = ["a n,", "b", "'c'"]
+    strtest = serialize(obj)
+    assert deserialize(strtest) == obj
+
+    obj = ["a n)", "b", "'c'"]
+    strtest = serialize(obj)
+    assert deserialize(strtest) == obj
+
+    obj = [{"()()()":"a n)", 4:"b"}, "'c'"]
     strtest = serialize(obj)
     assert deserialize(strtest) == obj
 
